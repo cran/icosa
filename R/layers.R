@@ -1023,7 +1023,7 @@ setMethod(
 		
 		#transformation is necessary
 		if(!is.null(projargs)){
-			requireNamespace("rgdal")
+		#	requireNamespace("rgdal")
 			actGrid@sp<-sp::spTransform(actGrid@sp, projargs)
 		}
 		#check whether the  grid is actually updated

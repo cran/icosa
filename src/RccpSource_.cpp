@@ -188,7 +188,7 @@ NumericVector edges_(NumericMatrix v, NumericMatrix e, NumericVector origin, boo
 		endObj(i) = ArcDist_(v(*tempIndex,_),v(*(tempIndex+1),_), origin, method);
 	}
 
-	delete tempIndex;
+	delete[] tempIndex;
 	return endObj;
 
 }
@@ -825,7 +825,7 @@ NumericMatrix Partition_(NumericMatrix faceNeighbours, LogicalVector activeFaces
 		counter++;
 	}
 
-	delete checked;
+	delete[] checked;
 
 	// get rid of the other values
 	NumericMatrix endObj(nCheckedFaces,2);
@@ -995,8 +995,8 @@ NumericMatrix EdgesFromPoints_(NumericMatrix verts, NumericVector howMany, Numer
 
 	}
 
-	delete dists;
-	delete sorted;
+	delete[] dists;
+	delete[] sorted;
 
 
 	//clean up the results
@@ -1010,7 +1010,7 @@ NumericMatrix EdgesFromPoints_(NumericMatrix verts, NumericVector howMany, Numer
 		tempObjCol2[i]= pair[1];
 	}
 
-	delete pair;
+	delete[] pair;
 
 //	return newTemp;
 
@@ -1055,14 +1055,14 @@ NumericMatrix EdgesFromPoints_(NumericMatrix verts, NumericVector howMany, Numer
 	}
 
 
-	delete col1;
-	delete col2;
+	delete[] col1;
+	delete[] col2;
 
 
 
 	// delete the tempobj columns
-	delete tempObjCol1;
-	delete tempObjCol2;
+	delete[] tempObjCol1;
+	delete[] tempObjCol2;
 
 	return endObj;
 
@@ -1160,7 +1160,7 @@ NumericMatrix EdgesToFaces_(NumericMatrix edges){
 		}
 
 		// clean up the things that lead to u1
-		delete u1Multi;
+		delete[] u1Multi;
 		u1Size = counter;
 
 	/////////////////////////////////////
@@ -1210,7 +1210,7 @@ NumericMatrix EdgesToFaces_(NumericMatrix edges){
 		}
 
 		// clean up the things that lead to u2
-		delete u2Multi;
+		delete[] u2Multi;
 		u2Size = counter;
 
 	////Double faces
@@ -1238,7 +1238,7 @@ NumericMatrix EdgesToFaces_(NumericMatrix edges){
 			}
 		}
 		doubleSize= counter;
-		delete logDoub;
+		delete[] logDoub;
 
 
 	// get the new points in the faces
@@ -1270,10 +1270,10 @@ NumericMatrix EdgesToFaces_(NumericMatrix edges){
 
 
 
-		delete u1;
-		delete u2;
-		delete chDouble;
-		delete chNew;
+		delete[] u1;
+		delete[] u2;
+		delete[] chDouble;
+		delete[] chNew;
 
 	}
 	//get rid of the unneeded values
@@ -1282,9 +1282,9 @@ NumericMatrix EdgesToFaces_(NumericMatrix edges){
 		endObj2(i,_) = endObj(i,_);
 	}
 
-	delete actEdge;
-	delete b1;
-	delete b2;
+	delete[] actEdge;
+	delete[] b1;
+	delete[] b2;
 
 	int max=globalCounter;
 
@@ -1326,9 +1326,9 @@ NumericMatrix EdgesToFaces_(NumericMatrix edges){
 
 	}
 
-	delete col1;
-	delete col3;
-	delete col2;
+	delete[] col1;
+	delete[] col3;
+	delete[] col2;
 
 	return endObj3;
 }
@@ -1434,9 +1434,9 @@ List TriangleTesselation_(NumericVector v0, NumericVector v1, NumericVector v2, 
 			}
 			int uniqueSize = counter;
 
-			delete newPointsCol0;
-			delete newPointsCol1;
-			delete newPointsCol2;
+			delete[] newPointsCol0;
+			delete[] newPointsCol1;
+			delete[] newPointsCol2;
 
 		// the number of points bound by two and four edges
 			int bound4 = uniqueSize;
@@ -1650,9 +1650,9 @@ List TriangleTesselation_(NumericVector v0, NumericVector v1, NumericVector v2, 
 			delete[] m3;
 			
 
-			delete npCol0;
-			delete npCol1;
-			delete npCol2;
+			delete[] npCol0;
+			delete[] npCol1;
+			delete[] npCol2;
 
 			// add up the two parts
 			int totalPoints = uniqueSize+storeCounter;
@@ -1664,9 +1664,9 @@ List TriangleTesselation_(NumericVector v0, NumericVector v1, NumericVector v2, 
 				vertices(i,2) = col3[i];
 			}
 
-			delete col1;
-			delete col2;
-			delete col3;
+			delete[] col1;
+			delete[] col2;
+			delete[] col3;
 
 			//second part
 			for(int i=0;i<storeCounter;i++){
@@ -1676,9 +1676,9 @@ List TriangleTesselation_(NumericVector v0, NumericVector v1, NumericVector v2, 
 
 			}
 
-			delete aNpCol0;
-			delete aNpCol1;
-			delete aNpCol2;
+			delete[] aNpCol0;
+			delete[] aNpCol1;
+			delete[] aNpCol2;
 
 	//		return vertices;
 
@@ -1723,9 +1723,9 @@ List TriangleTesselation_(NumericVector v0, NumericVector v1, NumericVector v2, 
 				vertices(i,2)= col3[i];
 			}
 
-			delete col1;
-			delete col2;
-			delete col3;
+			delete[] col1;
+			delete[] col2;
+			delete[] col3;
 
 	//		return vertices;
 
@@ -1976,8 +1976,8 @@ List IcosahedronTesselation_(NumericMatrix oldV, NumericMatrix oldF, NumericVect
 			nV = counter+nV;
 
 			// clean up the mess
-			delete replThis;
-			delete withThis;
+			delete[] replThis;
+			delete[] withThis;
 
 		//--// replace vertex indices in the facetables
 
@@ -2006,8 +2006,8 @@ List IcosahedronTesselation_(NumericMatrix oldV, NumericMatrix oldF, NumericVect
 			// the number of faces in the f table
 			nF=nF+nNewFace;
 
-			delete oldVertex;
-			delete newVertex;
+			delete[] oldVertex;
+			delete[] newVertex;
 
 
 		}
@@ -2757,8 +2757,8 @@ NumericVector InverseWeightByFaceCenter_(NumericMatrix fcNew, NumericVector loc,
 
 //		Rcout << "weighting\n";
 		newVals(i) = InvWeight_(vals, dists, counter);
-		delete dists;
-		delete vals;
+		delete[] dists;
+		delete[] vals;
 	}
 
 	return newVals;

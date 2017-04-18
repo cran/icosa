@@ -930,6 +930,8 @@ setMethod(
 			.Object@r <- tGrid@r
 			.Object@proj4string<- tGrid@proj4string
 			.Object@orientation<-c(0,0,0)
+			.Object@center <- center
+		
 		
 		# calculate the graph representation
 		dummy<-NA
@@ -939,14 +941,13 @@ setMethod(
 		}		
 		
 		if(sp==TRUE){
-				.Object@sp<-SpPolygons(.Object)
+				.Object@sp<-SpPolygons(.Object, res=25)
 		}else{
 			dummy<-NA
 			.Object@sp<-dummy
 		}
 		
 		# translate the 3d information with the center
-		.Object@center <- center
 		for(vc in 1:3){
 			.Object@vertices[,vc] <- .Object@vertices[,vc]+center[vc]
 			.Object@faceCenters[,vc] <- .Object@faceCenters[,vc]+center[vc]

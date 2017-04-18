@@ -87,31 +87,42 @@ oneFace<-function(faceMat, nadirFace, zenithFace,faceID){
 		if(boolZen){
 			cutInd<-which(abs(diff(faceMat[,1]))>320)
 			signChange<-sign(diff(faceMat[,1])[abs(diff(faceMat[,1]))>320])
-			#when positive
-			if(signChange>0){
-				insertMat<-matrix(c(-180,90,180,90),ncol=2, byrow=TRUE)
+			
+			# filter cases when there is a rounding error
+			if(length(signChange)>0){
+				#when positive			
+				if(signChange>0){
+					insertMat<-matrix(c(-180,90,180,90),ncol=2, byrow=TRUE)
+				}else{
+					insertMat<-matrix(c(180,90,-180,90),ncol=2, byrow=TRUE)
+				}
+				faceMat<-rbind(faceMat[1:cutInd,],
+					insertMat,
+					faceMat[(cutInd+1):nrow(faceMat),]
+				)
 			}else{
-				insertMat<-matrix(c(180,90,-180,90),ncol=2, byrow=TRUE)
+				boolZen <- FALSE
 			}
-			faceMat<-rbind(faceMat[1:cutInd,],
-				insertMat,
-				faceMat[(cutInd+1):nrow(faceMat),]
-			)
 		}
 		
 		if(boolNad){
 			cutInd<-which(abs(diff(faceMat[,1]))>320)
 			signChange<-sign(diff(faceMat[,1])[abs(diff(faceMat[,1]))>320])
-			#when positive
-			if(signChange>0){
-				insertMat<-matrix(c(-180,-90,180,-90),ncol=2, byrow=TRUE)
+			# filter cases when there is a rounding error
+			if(length(signChange)>0){	
+				#when positive
+				if(signChange>0){
+					insertMat<-matrix(c(-180,-90,180,-90),ncol=2, byrow=TRUE)
+				}else{
+					insertMat<-matrix(c(180,-90,-180,-90),ncol=2, byrow=TRUE)
+				}
+				faceMat<-rbind(faceMat[1:cutInd,],
+					insertMat,
+					faceMat[(cutInd+1):nrow(faceMat),]
+				)
 			}else{
-				insertMat<-matrix(c(180,-90,-180,-90),ncol=2, byrow=TRUE)
+				boolNad <- FALSE
 			}
-			faceMat<-rbind(faceMat[1:cutInd,],
-				insertMat,
-				faceMat[(cutInd+1):nrow(faceMat),]
-			)
 		}
 	
 		
@@ -323,14 +334,14 @@ setMethod(
 		nadirFace <- locate(gridObj,nadir)
 		
 		# override these if the x86 doesn't find the vertices at the poles
-		vertexCoord<-vertices(gridObj, output="polar")
-		if(90%in%vertexCoord[,2]){
-			zenithFace<-NA
-		}
-		
-		if(-90%in%vertexCoord[,2]){
-			nadirFace<-NA
-		}
+	#	vertexCoord<-vertices(gridObj, output="polar")
+	#	if(90%in%vertexCoord[,2]){
+	#		zenithFace<-NA
+	#	}
+	#	
+	#	if(-90%in%vertexCoord[,2]){
+	#		nadirFace<-NA
+	#	}
 		
 		
 	#extend the faces
@@ -391,7 +402,7 @@ setMethod(
 			}
 		
 			of<-sp::Polygons(ofList, ID=faceID)
-			return(of)
+#			return(of)
 	#	}
 		
 		})
@@ -403,7 +414,7 @@ setMethod(
 #			Sys.sleep(0.1)
 #		}
 		
-		endObj<-sp::SpatialPolygons(finalList, proj4string=CRS("+proj=longlat +a=6371007 +b=6371007"))
+		endObj<-sp::SpatialPolygons(finalList, proj4string=gridObj@proj4string)
 		
 		return(endObj)
 	}
@@ -629,7 +640,7 @@ setMethod(
 		
 		#transformation is necessary
 		if(!is.null(projargs)){
-			requireNamespace("rgdal")
+		#	requireNamespace("rgdal")
 			if(class(projargs)=="CRS"){
 				x@sp<-sp::spTransform(x@sp, projargs)
 			}
@@ -663,7 +674,7 @@ setMethod(
 		
 		#transformation is necessary
 		if(!is.null(projargs)){
-			requireNamespace("rgdal")
+		#	requireNamespace("rgdal")
 			if(class(projargs)=="CRS"){
 				x@sp<-sp::spTransform(x@sp, projargs)
 			}
@@ -714,7 +725,7 @@ gridlabs<-function(gridObj,type="f",projargs=NULL,...){
 	
 	#transformation is necessary
 	if(!is.null(projargs)){
-		requireNamespace("rgdal")
+	#	requireNamespace("rgdal")
 		if(class(projargs)=="CRS"){
 			spPoints<-sp::spTransform(spPoints, projargs)
 		}

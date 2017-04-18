@@ -1,6 +1,12 @@
 # Change log
 
-## [0.9.80] - 2017-04-17
+## [0.9.81] - 2017-04-18
+### Fixed
+- memory deallocation issues
+- SpPolygons(): zenith/nadir face issue
+- unnecessary 'rgdal' namespace import
+
+## [0.9.80] (Beta) - 2017-04-17
 ### Added
 - the locate() function was updated to version 6.0, now incorporating the 'randomborders' argument
 - the occupied() function was rebuilt on the locate() function
@@ -45,11 +51,11 @@ the facelayer
 - added 2d plotting scheme for 'facelayers', where the values of the facelayer are exclusively colours
 
 ### Deleted
-- the depriciated argument "border" is no longer available for the user interface of locate()
+- the deprecated argument "border" is no longer available for the user interface of locate()
 
-## [0.8.0] - 2016-11-25
+## [0.8.0] (Alpha) - 2016-11-25
 ### Added
-- Most griding features are functional and should be usable, I consider the package to be ready for alpha testing.
+- Most gridding features are functional and should be usable, I consider the package to be ready for alpha testing.
 
 ### Notes
-This is the alpha version. I know a lot of additional issues are present, but I need some rest from this project. 
+Pre-alpha versions were not registered.

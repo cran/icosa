@@ -1,7 +1,7 @@
 Package: icosa
 Title: Global Triangular and Penta-Hexagonal Grids Based on Tessellated
         Icosahedra
-Version: 0.9.80
+Version: 0.9.81
 Authors@R: person("Adam T.", "Kocsis", email = "adam.kocsis@outlook.com", 
 	role = c("aut", "cre"))
 Description: Employs triangular tessellation to refine icosahedra
@@ -21,8 +21,8 @@ RoxygenNote: 5.0.1
 LinkingTo: Rcpp
 Imports: Rcpp, sp, raster, igraph, rgdal, methods
 NeedsCompilation: yes
-Packaged: 2017-04-17 17:45:10 UTC; kocsis
+Packaged: 2017-04-18 12:46:09 UTC; kocsis
 Author: Adam T. Kocsis [aut, cre]
 Maintainer: Adam T. Kocsis <adam.kocsis@outlook.com>
 Repository: CRAN
-Date/Publication: 2017-04-17 22:54:10 UTC
+Date/Publication: 2017-04-18 16:04:55 UTC

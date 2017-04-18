@@ -240,10 +240,10 @@ extern "C" void locateTriangle_(
 	}
 	// clean up
 
-	delete foundPoints;
-//	delete foundMiddle;
-	delete foundPointsInner;
-	delete dets;
+	delete[] foundPoints;
+//	delete[] foundMiddle;
+	delete[] foundPointsInner;
+	delete[] dets;
 
 }
 

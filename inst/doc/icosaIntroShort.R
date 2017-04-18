@@ -129,9 +129,6 @@ file <- system.file("extdata", "land_polygons_z3.shx", package = "icosa")
 # read in the shape file
 wo <- readOGR(file, "land_polygons_z3")
 
-# and plot
-plot(wo)	
-
 ## ----examplePaleo, plot=TRUE, ,dev='png',dpi=300-------------------------
 # transform the land data to long-lat coordinates
 wo <- spTransform(wo, gLow@proj4string)
@@ -246,25 +243,6 @@ plot(hLow, col=allColours[as.numeric(factor(catLayer@values))])
 legend("right",fill=allColours, legend=levels(factor(catLayer@values)), inset=c(-0.15,0))
 
 
-## ----spdf, rgl=TRUE,dev='png',dpi=300------------------------------------
-# data frame of variables
-dat<-data.frame(
-	category=catLayer@values,  # character/factor data
-	boolvar=sample(c(T, F), length(hLow), replace=T),  # logical data
-	numvar=rnorm(length(hLow))) # numerical data
-	
-# add the rownames
-rownames(dat) <- rownames(hLow@faces)
-
-# SpatialPolygonsDataFrame class
-spdf <- SpatialPolygonsDataFrame(
-	Sr=hLow@sp, 
-	data=dat)
-	
-# plot with spplot()
-spplot(spdf, zcol="category", main="plotting with spplot")
-
-
 ## ----tri20, rgl=TRUE,dev='png',dpi=300-----------------------------------
 # generate 50000 random coordinates on a sphere of default radius
 pointdat <- rpsphere(5000)
@@ -325,25 +303,11 @@ fL<-occupied(hLow, woP)
 
 plot3d(fL, col="red")
 
-## ----tri25, rgl=TRUE,dev='png',dpi=300-----------------------------------
-# the facelayer of the occupied cells
-gHigh<-trigrid(c(8,8))
-fL<-occupied(gHigh, woL, f=10)
-
-plot3d(fL, col="blue")
-
-## ----tri25b, rgl=TRUE,dev='png',dpi=300----------------------------------
-# plot the faces
-plot3d(fL, col="blue", guides=F)
-# and then on top, plot the actual lines
-lines3d(woL, col="red", plot=F)
-
 ## ----tri26, rgl=TRUE,dev='png',dpi=300-----------------------------------
-hHigh<- hexagrid(c(8,8))
 # look up the polygons
-landFaces<-occupied(hHigh, wo)
+landFaces<-occupied(hLow, wo)
 # the empty grid
-plot3d(hHigh, guides=F)
+plot3d(hLow, guides=F)
 
 # the landmass of the world
 faces3d(landFaces, col="blue")
@@ -361,11 +325,11 @@ plot(r)
 ## ----tri27, rgl=TRUE,dev='png',dpi=300-----------------------------------
 
 # resample the original data
-resDat<-resample(r, hHigh, "ngb")
+resDat<-resample(r, hLow, "ngb")
 
 ## ----tri28, rgl=TRUE,dev='png',dpi=300-----------------------------------
 # new facelayer
-precLayer<- facelayer(hHigh)
+precLayer<- facelayer(hLow)
 # fill in the new facelayer
 precLayer[]<-resDat
 
@@ -374,20 +338,8 @@ precLayer[]<-resDat
 plot3d(precLayer, col=c("red","orange", "yellow", "cyan", "blue"))
 
 ## ----tri30, plot=TRUE,dev='png',dpi=300----------------------------------
-# the grid 
-hHigh<-newsp(hHigh)
 # the 
 plot(precLayer, col=c("red","orange", "yellow", "cyan", "blue"), tick.cex=0.7, axes=T)
-
-## ----tri31b, plot=TRUE,dev='png',dpi=300---------------------------------
-# the resampling function (downsample in this case)
-lowResDat<-resample(precLayer, gLow)
-# the lower resolution facelayer
-lowPrecLayer <- facelayer(gLow)
-# put the results in the layer
-lowPrecLayer[] <- lowResDat
-# plot it
-plot(lowPrecLayer, col=c("red","orange", "yellow", "cyan", "blue"), tick.cex=0.7, axes=T)
 
 ## ----vic1, rgl=TRUE,dev='png',dpi=300------------------------------------
 # calculate a very coarse resolution grid
@@ -463,13 +415,13 @@ plot(landFaces, col="brown")
 
 ## ----ggraph6, dev='png',dpi=300------------------------------------------
 # shortest path in igraph
-path <- shortest_paths(landGraph, from="F6284", to="F17089", output="vpath")
+path <- shortest_paths(landGraph, from="F432", to="F1073", output="vpath")
 # the names of the cells in order
 cells<-path$vpath[[1]]$name
 # plot the map
 plot(landFaces, col="brown", xlim=c(0,90), ylim=c(0,90))
 # make a subset of the grid - which corresponds to the path
-routeGrid<-hHigh[cells]
+routeGrid<-hLow[cells]
 # plot the path
 plot(routeGrid, col="red", add=T)
 
@@ -477,13 +429,13 @@ plot(routeGrid, col="red", add=T)
 # plot the map
 plot(landFaces, col="brown", xlim=c(0,90), ylim=c(0,90))
 # create a random walk from source cell with a given no. of steps
-randomWalk <- random_walk(landGraph, steps=1000, start="F6284")
+randomWalk <- random_walk(landGraph, steps=100, start="F432")
 # the names of the cells visited by the random walker
 cells<-randomWalk$name
 # the source cell
-plot(hHigh["F6284"], col="green",add=T)
+plot(hLow["F432"], col="green",add=T)
 # the centers of these faces
-centers<-CarToPol(hHigh@faceCenters[cells,], norad=T)
+centers<-CarToPol(hLow@faceCenters[cells,], norad=T)
 # draw the lines of the random walk
 for(i in 2:nrow(centers)){
 	segments(x0=centers[i-1,1], y0=centers[i-1,2], x1=centers[i,1], y1=centers[i,2], lwd=2)
@@ -491,9 +443,9 @@ for(i in 2:nrow(centers)){
 
 ## ----tri31, rgl=TRUE,dev='png',dpi=300-----------------------------------
 # sphere 1
-aSphere<-rpsphere(n=500, origin=c(0,0,0), radius=1)
+aSphere<-rpsphere(n=250, origin=c(0,0,0), radius=1)
 # sphere 2
-bSphere<-rpsphere(n=500, origin=c(1,1,1), radius=3)
+bSphere<-rpsphere(n=250, origin=c(1,1,1), radius=3)
 points3d(aSphere, col="blue")
 points3d(bSphere, col="red")
 
@@ -514,7 +466,7 @@ amat<-arcdistmat(hLow@faceCenters, radius=hLow@r, origin=hLow@center)
 amat[1:6,1:6]
 
 ## ----triarc2, plot=TRUE,dev='png',dpi=300--------------------------------
-randPoints<-rpsphere(500)
+randPoints<-rpsphere(15)
 #great circle distance matrix between the facecenters
 amat<-arcdistmat(hLow@faceCenters, randPoints, radius=hLow@r, origin=hLow@center)
 

@@ -531,7 +531,7 @@ occupied  <- function(gridObj, data,...){
 	if(methods::.hasSlot(data, "proj4string")){
 		# and only if it is not NA
 		if(!is.na(data@proj4string)){
-			requireNamespace("rgdal")
+		#	requireNamespace("rgdal")
 			data<-sp::spTransform(data, gridObj@proj4string)
 		}
 	}
@@ -826,7 +826,7 @@ setMethod(
 		if(methods::.hasSlot(data, "proj4string")){
 			# and it's not NA
 			if(!is.na(data@proj4string)){
-				requireNamespace("rgdal")
+			#	requireNamespace("rgdal")
 				data<-sp::spTransform(data, gridObj@proj4string)@coords
 			}
 		}
@@ -982,7 +982,7 @@ setMethod(
 		if(methods::.hasSlot(data, "proj4string")){
 			# and it's not NA
 			if(!is.na(data@proj4string)){
-				requireNamespace("rgdal")
+			#	requireNamespace("rgdal")
 				data<-sp::spTransform(data, gridObj@proj4string)@coords
 			}
 		}
