@@ -5,79 +5,9 @@
 
 using namespace Rcpp;
 
-// edgeMatTri_
-NumericMatrix edgeMatTri_(NumericMatrix v, NumericMatrix e);
-RcppExport SEXP icosa_edgeMatTri_(SEXP vSEXP, SEXP eSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type e(eSEXP);
-    rcpp_result_gen = Rcpp::wrap(edgeMatTri_(v, e));
-    return rcpp_result_gen;
-END_RCPP
-}
-// triMatTri_
-NumericMatrix triMatTri_(NumericMatrix v, NumericMatrix f);
-RcppExport SEXP icosa_triMatTri_(SEXP vSEXP, SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(triMatTri_(v, f));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pointLayerColorOrder_
-NumericVector pointLayerColorOrder_(NumericMatrix f);
-RcppExport SEXP icosa_pointLayerColorOrder_(SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(pointLayerColorOrder_(f));
-    return rcpp_result_gen;
-END_RCPP
-}
-// xxxxyyyyzzzz_
-NumericVector xxxxyyyyzzzz_(NumericMatrix v, NumericMatrix f);
-RcppExport SEXP icosa_xxxxyyyyzzzz_(SEXP vSEXP, SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(xxxxyyyyzzzz_(v, f));
-    return rcpp_result_gen;
-END_RCPP
-}
-// xyz1xyz1xyz1xyz1_
-NumericVector xyz1xyz1xyz1xyz1_(NumericMatrix v, NumericMatrix f);
-RcppExport SEXP icosa_xyz1xyz1xyz1xyz1_(SEXP vSEXP, SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(xyz1xyz1xyz1xyz1_(v, f));
-    return rcpp_result_gen;
-END_RCPP
-}
-// xyz1
-NumericVector xyz1(NumericMatrix q);
-RcppExport SEXP icosa_xyz1(SEXP qSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type q(qSEXP);
-    rcpp_result_gen = Rcpp::wrap(xyz1(q));
-    return rcpp_result_gen;
-END_RCPP
-}
 // Collapse_
 NumericVector Collapse_(NumericVector vect);
-RcppExport SEXP icosa_Collapse_(SEXP vectSEXP) {
+RcppExport SEXP _icosa_Collapse_(SEXP vectSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,7 +18,7 @@ END_RCPP
 }
 // ArcDist_
 double ArcDist_(NumericVector coord1, NumericVector coord2, NumericVector origin, bool method);
-RcppExport SEXP icosa_ArcDist_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP originSEXP, SEXP methodSEXP) {
+RcppExport SEXP _icosa_ArcDist_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP originSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -102,7 +32,7 @@ END_RCPP
 }
 // SymmetricArcDistMat_
 NumericMatrix SymmetricArcDistMat_(NumericMatrix xyzMat, NumericVector origin, bool method);
-RcppExport SEXP icosa_SymmetricArcDistMat_(SEXP xyzMatSEXP, SEXP originSEXP, SEXP methodSEXP) {
+RcppExport SEXP _icosa_SymmetricArcDistMat_(SEXP xyzMatSEXP, SEXP originSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -115,7 +45,7 @@ END_RCPP
 }
 // ArcDistMat_
 NumericMatrix ArcDistMat_(NumericMatrix gridPoints, NumericMatrix queries, NumericVector origin, bool method);
-RcppExport SEXP icosa_ArcDistMat_(SEXP gridPointsSEXP, SEXP queriesSEXP, SEXP originSEXP, SEXP methodSEXP) {
+RcppExport SEXP _icosa_ArcDistMat_(SEXP gridPointsSEXP, SEXP queriesSEXP, SEXP originSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -129,7 +59,7 @@ END_RCPP
 }
 // ArcDistMany_
 NumericVector ArcDistMany_(NumericMatrix p0, NumericMatrix p1, NumericVector origin, bool method);
-RcppExport SEXP icosa_ArcDistMany_(SEXP p0SEXP, SEXP p1SEXP, SEXP originSEXP, SEXP methodSEXP) {
+RcppExport SEXP _icosa_ArcDistMany_(SEXP p0SEXP, SEXP p1SEXP, SEXP originSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -143,7 +73,7 @@ END_RCPP
 }
 // whichMinVector_
 int whichMinVector_(NumericVector one);
-RcppExport SEXP icosa_whichMinVector_(SEXP oneSEXP) {
+RcppExport SEXP _icosa_whichMinVector_(SEXP oneSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -154,7 +84,7 @@ END_RCPP
 }
 // Aggregate_
 NumericVector Aggregate_(NumericMatrix gridPoints, NumericMatrix queries, NumericVector origin);
-RcppExport SEXP icosa_Aggregate_(SEXP gridPointsSEXP, SEXP queriesSEXP, SEXP originSEXP) {
+RcppExport SEXP _icosa_Aggregate_(SEXP gridPointsSEXP, SEXP queriesSEXP, SEXP originSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -167,7 +97,7 @@ END_RCPP
 }
 // edges_
 NumericVector edges_(NumericMatrix v, NumericMatrix e, NumericVector origin, bool method);
-RcppExport SEXP icosa_edges_(SEXP vSEXP, SEXP eSEXP, SEXP originSEXP, SEXP methodSEXP) {
+RcppExport SEXP _icosa_edges_(SEXP vSEXP, SEXP eSEXP, SEXP originSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -181,7 +111,7 @@ END_RCPP
 }
 // SphericalTriangleSurface_
 double SphericalTriangleSurface_(NumericVector coord1, NumericVector coord2, NumericVector coord3, NumericVector origin, double pi);
-RcppExport SEXP icosa_SphericalTriangleSurface_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP coord3SEXP, SEXP originSEXP, SEXP piSEXP) {
+RcppExport SEXP _icosa_SphericalTriangleSurface_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP coord3SEXP, SEXP originSEXP, SEXP piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -196,7 +126,7 @@ END_RCPP
 }
 // spherTriSurfs
 NumericVector spherTriSurfs(NumericMatrix v, NumericMatrix f, NumericVector origin, double pi);
-RcppExport SEXP icosa_spherTriSurfs(SEXP vSEXP, SEXP fSEXP, SEXP originSEXP, SEXP piSEXP) {
+RcppExport SEXP _icosa_spherTriSurfs(SEXP vSEXP, SEXP fSEXP, SEXP originSEXP, SEXP piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -208,9 +138,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// surfConvHullTri
+double surfConvHullTri(NumericMatrix v, NumericVector cent, NumericVector origin, double pi);
+RcppExport SEXP _icosa_surfConvHullTri(SEXP vSEXP, SEXP centSEXP, SEXP originSEXP, SEXP piSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type cent(centSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type origin(originSEXP);
+    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
+    rcpp_result_gen = Rcpp::wrap(surfConvHullTri(v, cent, origin, pi));
+    return rcpp_result_gen;
+END_RCPP
+}
 // SplitArc_
 NumericMatrix SplitArc_(NumericVector coord1, NumericVector coord2, NumericVector center, int breaks, bool onlyNew);
-RcppExport SEXP icosa_SplitArc_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP centerSEXP, SEXP breaksSEXP, SEXP onlyNewSEXP) {
+RcppExport SEXP _icosa_SplitArc_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP centerSEXP, SEXP breaksSEXP, SEXP onlyNewSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -225,7 +169,7 @@ END_RCPP
 }
 // GreatCircle_
 NumericMatrix GreatCircle_(NumericVector coord1, NumericVector coord2, NumericVector origin, int breaks, double pi);
-RcppExport SEXP icosa_GreatCircle_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP originSEXP, SEXP breaksSEXP, SEXP piSEXP) {
+RcppExport SEXP _icosa_GreatCircle_(SEXP coord1SEXP, SEXP coord2SEXP, SEXP originSEXP, SEXP breaksSEXP, SEXP piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -240,7 +184,7 @@ END_RCPP
 }
 // NeighbourOfOneFace_
 NumericVector NeighbourOfOneFace_(NumericMatrix faces, int faceNo);
-RcppExport SEXP icosa_NeighbourOfOneFace_(SEXP facesSEXP, SEXP faceNoSEXP) {
+RcppExport SEXP _icosa_NeighbourOfOneFace_(SEXP facesSEXP, SEXP faceNoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -252,7 +196,7 @@ END_RCPP
 }
 // DirectNeighboursTri_
 NumericMatrix DirectNeighboursTri_(NumericMatrix faces);
-RcppExport SEXP icosa_DirectNeighboursTri_(SEXP facesSEXP) {
+RcppExport SEXP _icosa_DirectNeighboursTri_(SEXP facesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -263,7 +207,7 @@ END_RCPP
 }
 // AllNeighboursTri_
 NumericMatrix AllNeighboursTri_(NumericMatrix allFaces, NumericVector div);
-RcppExport SEXP icosa_AllNeighboursTri_(SEXP allFacesSEXP, SEXP divSEXP) {
+RcppExport SEXP _icosa_AllNeighboursTri_(SEXP allFacesSEXP, SEXP divSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -275,7 +219,7 @@ END_RCPP
 }
 // GetPatch_
 NumericVector GetPatch_(NumericMatrix faceNeighbours, LogicalVector activeFaces, int startFace, int maxRound);
-RcppExport SEXP icosa_GetPatch_(SEXP faceNeighboursSEXP, SEXP activeFacesSEXP, SEXP startFaceSEXP, SEXP maxRoundSEXP) {
+RcppExport SEXP _icosa_GetPatch_(SEXP faceNeighboursSEXP, SEXP activeFacesSEXP, SEXP startFaceSEXP, SEXP maxRoundSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -289,7 +233,7 @@ END_RCPP
 }
 // Partition_
 NumericMatrix Partition_(NumericMatrix faceNeighbours, LogicalVector activeFaces, int maxRound);
-RcppExport SEXP icosa_Partition_(SEXP faceNeighboursSEXP, SEXP activeFacesSEXP, SEXP maxRoundSEXP) {
+RcppExport SEXP _icosa_Partition_(SEXP faceNeighboursSEXP, SEXP activeFacesSEXP, SEXP maxRoundSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -302,7 +246,7 @@ END_RCPP
 }
 // Refine2d_
 NumericMatrix Refine2d_(NumericMatrix From, int breaks);
-RcppExport SEXP icosa_Refine2d_(SEXP FromSEXP, SEXP breaksSEXP) {
+RcppExport SEXP _icosa_Refine2d_(SEXP FromSEXP, SEXP breaksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -314,7 +258,7 @@ END_RCPP
 }
 // SphericalTriangleCenter_
 NumericVector SphericalTriangleCenter_(NumericVector v0, NumericVector v1, NumericVector v2, NumericVector origin);
-RcppExport SEXP icosa_SphericalTriangleCenter_(SEXP v0SEXP, SEXP v1SEXP, SEXP v2SEXP, SEXP originSEXP) {
+RcppExport SEXP _icosa_SphericalTriangleCenter_(SEXP v0SEXP, SEXP v1SEXP, SEXP v2SEXP, SEXP originSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -328,7 +272,7 @@ END_RCPP
 }
 // EdgesFromPoints_
 NumericMatrix EdgesFromPoints_(NumericMatrix verts, NumericVector howMany, NumericVector origin);
-RcppExport SEXP icosa_EdgesFromPoints_(SEXP vertsSEXP, SEXP howManySEXP, SEXP originSEXP) {
+RcppExport SEXP _icosa_EdgesFromPoints_(SEXP vertsSEXP, SEXP howManySEXP, SEXP originSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -341,7 +285,7 @@ END_RCPP
 }
 // stl_sort
 NumericVector stl_sort(NumericVector x);
-RcppExport SEXP icosa_stl_sort(SEXP xSEXP) {
+RcppExport SEXP _icosa_stl_sort(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -352,7 +296,7 @@ END_RCPP
 }
 // EdgesToFaces_
 NumericMatrix EdgesToFaces_(NumericMatrix edges);
-RcppExport SEXP icosa_EdgesToFaces_(SEXP edgesSEXP) {
+RcppExport SEXP _icosa_EdgesToFaces_(SEXP edgesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -363,7 +307,7 @@ END_RCPP
 }
 // TriangleTesselation_
 List TriangleTesselation_(NumericVector v0, NumericVector v1, NumericVector v2, NumericVector origin, int lineBreak);
-RcppExport SEXP icosa_TriangleTesselation_(SEXP v0SEXP, SEXP v1SEXP, SEXP v2SEXP, SEXP originSEXP, SEXP lineBreakSEXP) {
+RcppExport SEXP _icosa_TriangleTesselation_(SEXP v0SEXP, SEXP v1SEXP, SEXP v2SEXP, SEXP originSEXP, SEXP lineBreakSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -378,7 +322,7 @@ END_RCPP
 }
 // SizeEstimate_
 NumericVector SizeEstimate_(NumericVector tesselation);
-RcppExport SEXP icosa_SizeEstimate_(SEXP tesselationSEXP) {
+RcppExport SEXP _icosa_SizeEstimate_(SEXP tesselationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -389,7 +333,7 @@ END_RCPP
 }
 // IcosahedronTesselation_
 List IcosahedronTesselation_(NumericMatrix oldV, NumericMatrix oldF, NumericVector tesselation, NumericVector origin);
-RcppExport SEXP icosa_IcosahedronTesselation_(SEXP oldVSEXP, SEXP oldFSEXP, SEXP tesselationSEXP, SEXP originSEXP) {
+RcppExport SEXP _icosa_IcosahedronTesselation_(SEXP oldVSEXP, SEXP oldFSEXP, SEXP tesselationSEXP, SEXP originSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -403,7 +347,7 @@ END_RCPP
 }
 // expandFacesToEdges_
 NumericMatrix expandFacesToEdges_(NumericMatrix faces);
-RcppExport SEXP icosa_expandFacesToEdges_(SEXP facesSEXP) {
+RcppExport SEXP _icosa_expandFacesToEdges_(SEXP facesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -414,7 +358,7 @@ END_RCPP
 }
 // orderTriGrid_
 List orderTriGrid_(NumericMatrix faces, NumericMatrix neigh, NumericVector startFaces, NumericVector startVert, int nBelts, int nV);
-RcppExport SEXP icosa_orderTriGrid_(SEXP facesSEXP, SEXP neighSEXP, SEXP startFacesSEXP, SEXP startVertSEXP, SEXP nBeltsSEXP, SEXP nVSEXP) {
+RcppExport SEXP _icosa_orderTriGrid_(SEXP facesSEXP, SEXP neighSEXP, SEXP startFacesSEXP, SEXP startVertSEXP, SEXP nBeltsSEXP, SEXP nVSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -430,7 +374,7 @@ END_RCPP
 }
 // allTriangleCenters_
 NumericMatrix allTriangleCenters_(NumericMatrix v, NumericMatrix f, NumericVector origin);
-RcppExport SEXP icosa_allTriangleCenters_(SEXP vSEXP, SEXP fSEXP, SEXP originSEXP) {
+RcppExport SEXP _icosa_allTriangleCenters_(SEXP vSEXP, SEXP fSEXP, SEXP originSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -443,7 +387,7 @@ END_RCPP
 }
 // CreateHexaSubfaces_
 NumericMatrix CreateHexaSubfaces_(NumericMatrix n, NumericMatrix f, int nV);
-RcppExport SEXP icosa_CreateHexaSubfaces_(SEXP nSEXP, SEXP fSEXP, SEXP nVSEXP) {
+RcppExport SEXP _icosa_CreateHexaSubfaces_(SEXP nSEXP, SEXP fSEXP, SEXP nVSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -456,7 +400,7 @@ END_RCPP
 }
 // HexaFaces_
 NumericMatrix HexaFaces_(NumericMatrix fOrd);
-RcppExport SEXP icosa_HexaFaces_(SEXP fOrdSEXP) {
+RcppExport SEXP _icosa_HexaFaces_(SEXP fOrdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -467,7 +411,7 @@ END_RCPP
 }
 // RetrieveIndexMat_
 NumericMatrix RetrieveIndexMat_(NumericVector indices);
-RcppExport SEXP icosa_RetrieveIndexMat_(SEXP indicesSEXP) {
+RcppExport SEXP _icosa_RetrieveIndexMat_(SEXP indicesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -478,7 +422,7 @@ END_RCPP
 }
 // InverseWeightByFaceCenter_
 NumericVector InverseWeightByFaceCenter_(NumericMatrix fcNew, NumericVector loc, NumericMatrix n, NumericMatrix fcOld, NumericVector values, NumericVector origin, int deg);
-RcppExport SEXP icosa_InverseWeightByFaceCenter_(SEXP fcNewSEXP, SEXP locSEXP, SEXP nSEXP, SEXP fcOldSEXP, SEXP valuesSEXP, SEXP originSEXP, SEXP degSEXP) {
+RcppExport SEXP _icosa_InverseWeightByFaceCenter_(SEXP fcNewSEXP, SEXP locSEXP, SEXP nSEXP, SEXP fcOldSEXP, SEXP valuesSEXP, SEXP originSEXP, SEXP degSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -495,7 +439,7 @@ END_RCPP
 }
 // OccupiedCellUpSampling_
 NumericVector OccupiedCellUpSampling_(NumericVector values, NumericVector loc);
-RcppExport SEXP icosa_OccupiedCellUpSampling_(SEXP valuesSEXP, SEXP locSEXP) {
+RcppExport SEXP _icosa_OccupiedCellUpSampling_(SEXP valuesSEXP, SEXP locSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -506,14 +450,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // ExpandBoundariesToCols_
-NumericMatrix ExpandBoundariesToCols_(NumericMatrix f, NumericMatrix v, int res, NumericVector origin, int pent);
-RcppExport SEXP icosa_ExpandBoundariesToCols_(SEXP fSEXP, SEXP vSEXP, SEXP resSEXP, SEXP originSEXP, SEXP pentSEXP) {
+NumericMatrix ExpandBoundariesToCols_(NumericMatrix f, NumericMatrix v, NumericVector res, NumericVector origin, int pent);
+RcppExport SEXP _icosa_ExpandBoundariesToCols_(SEXP fSEXP, SEXP vSEXP, SEXP resSEXP, SEXP originSEXP, SEXP pentSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
-    Rcpp::traits::input_parameter< int >::type res(resSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type res(resSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type origin(originSEXP);
     Rcpp::traits::input_parameter< int >::type pent(pentSEXP);
     rcpp_result_gen = Rcpp::wrap(ExpandBoundariesToCols_(f, v, res, origin, pent));
@@ -522,7 +466,7 @@ END_RCPP
 }
 // ShapeTri_
 double ShapeTri_(NumericVector p0, NumericVector p1, NumericVector p2);
-RcppExport SEXP icosa_ShapeTri_(SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP) {
+RcppExport SEXP _icosa_ShapeTri_(SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -535,7 +479,7 @@ END_RCPP
 }
 // AllShapeTri_
 NumericVector AllShapeTri_(NumericMatrix v, NumericMatrix f);
-RcppExport SEXP icosa_AllShapeTri_(SEXP vSEXP, SEXP fSEXP) {
+RcppExport SEXP _icosa_AllShapeTri_(SEXP vSEXP, SEXP fSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -547,7 +491,7 @@ END_RCPP
 }
 // expandEdges_
 NumericMatrix expandEdges_(NumericMatrix eExp, NumericVector center, double res);
-RcppExport SEXP icosa_expandEdges_(SEXP eExpSEXP, SEXP centerSEXP, SEXP resSEXP) {
+RcppExport SEXP _icosa_expandEdges_(SEXP eExpSEXP, SEXP centerSEXP, SEXP resSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -560,7 +504,7 @@ END_RCPP
 }
 // ExpandEdgesByFacesTri_
 NumericMatrix ExpandEdgesByFacesTri_(NumericMatrix origV, NumericMatrix origSubF, NumericVector center, int breaks);
-RcppExport SEXP icosa_ExpandEdgesByFacesTri_(SEXP origVSEXP, SEXP origSubFSEXP, SEXP centerSEXP, SEXP breaksSEXP) {
+RcppExport SEXP _icosa_ExpandEdgesByFacesTri_(SEXP origVSEXP, SEXP origSubFSEXP, SEXP centerSEXP, SEXP breaksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -574,7 +518,7 @@ END_RCPP
 }
 // edgeListFromNeighbours_
 NumericMatrix edgeListFromNeighbours_(NumericMatrix outN);
-RcppExport SEXP icosa_edgeListFromNeighbours_(SEXP outNSEXP) {
+RcppExport SEXP _icosa_edgeListFromNeighbours_(SEXP outNSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -585,7 +529,7 @@ END_RCPP
 }
 // EvenInterpolation_
 NumericVector EvenInterpolation_(NumericMatrix xyz, NumericVector origin, double critValue);
-RcppExport SEXP icosa_EvenInterpolation_(SEXP xyzSEXP, SEXP originSEXP, SEXP critValueSEXP) {
+RcppExport SEXP _icosa_EvenInterpolation_(SEXP xyzSEXP, SEXP originSEXP, SEXP critValueSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -598,7 +542,7 @@ END_RCPP
 }
 // centroidPoints_
 NumericMatrix centroidPoints_(NumericMatrix coords, NumericMatrix combin, NumericVector center, int breaks);
-RcppExport SEXP icosa_centroidPoints_(SEXP coordsSEXP, SEXP combinSEXP, SEXP centerSEXP, SEXP breaksSEXP) {
+RcppExport SEXP _icosa_centroidPoints_(SEXP coordsSEXP, SEXP combinSEXP, SEXP centerSEXP, SEXP breaksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -612,7 +556,7 @@ END_RCPP
 }
 // projectCloseToPoint_
 NumericMatrix projectCloseToPoint_(NumericMatrix coords, NumericVector toPoint, NumericVector center, int breaks);
-RcppExport SEXP icosa_projectCloseToPoint_(SEXP coordsSEXP, SEXP toPointSEXP, SEXP centerSEXP, SEXP breaksSEXP) {
+RcppExport SEXP _icosa_projectCloseToPoint_(SEXP coordsSEXP, SEXP toPointSEXP, SEXP centerSEXP, SEXP breaksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -621,6 +565,76 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type center(centerSEXP);
     Rcpp::traits::input_parameter< int >::type breaks(breaksSEXP);
     rcpp_result_gen = Rcpp::wrap(projectCloseToPoint_(coords, toPoint, center, breaks));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xxxxyyyyzzzz_
+NumericVector xxxxyyyyzzzz_(NumericMatrix v, NumericMatrix f);
+RcppExport SEXP _icosa_xxxxyyyyzzzz_(SEXP vSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(xxxxyyyyzzzz_(v, f));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xyz1xyz1xyz1xyz1_
+NumericVector xyz1xyz1xyz1xyz1_(NumericMatrix v, NumericMatrix f);
+RcppExport SEXP _icosa_xyz1xyz1xyz1xyz1_(SEXP vSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(xyz1xyz1xyz1xyz1_(v, f));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xyz1
+NumericVector xyz1(NumericMatrix q);
+RcppExport SEXP _icosa_xyz1(SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(xyz1(q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// edgeMatTri_
+NumericMatrix edgeMatTri_(NumericMatrix v, NumericMatrix e);
+RcppExport SEXP _icosa_edgeMatTri_(SEXP vSEXP, SEXP eSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type e(eSEXP);
+    rcpp_result_gen = Rcpp::wrap(edgeMatTri_(v, e));
+    return rcpp_result_gen;
+END_RCPP
+}
+// triMatTri_
+NumericMatrix triMatTri_(NumericMatrix v, NumericMatrix f);
+RcppExport SEXP _icosa_triMatTri_(SEXP vSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(triMatTri_(v, f));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointLayerColorOrder_
+NumericVector pointLayerColorOrder_(NumericMatrix f);
+RcppExport SEXP _icosa_pointLayerColorOrder_(SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointLayerColorOrder_(f));
     return rcpp_result_gen;
 END_RCPP
 }

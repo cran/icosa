@@ -88,7 +88,7 @@ extern "C" void PointInTetrahedron_(double *vertices,double *query,double *dets,
 }
 
 // hierarchical searching
-extern "C" void locateTriangle_(
+extern "C" void _locateTriangle_(
 	double *allVertices,
 	int *divs,
 	int *nDivs,
