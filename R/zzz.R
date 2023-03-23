@@ -5,7 +5,7 @@
 #'    custom resolution. Both the primary triangular and their inverted penta-
 #'   hexagonal grids are available for implementation. Additional functions
 #'    are provided to position points (latitude-longitude data) on the grids,
-#'    to allow 2D and 3D plotting, use raster data and shapefiles.
+#'    to allow 2D and 3D plotting, use raster and vector spatial data.
 #' 
 #' This is still the Beta version. Notes about found bugs and suggestions are more than welcome!
 #'
@@ -17,6 +17,10 @@
 #' @name icosa
 #' @useDynLib icosa, .registration = TRUE, .fixes="Cpp"
 
+#' @importFrom sf st_crs
+#' @importFrom sf st_as_sf
+#' @importFrom sf st_transform
+#' @importFrom sf st_coordinates
 #' @importFrom Rcpp sourceCpp
 #' @importFrom sp coordinates
 #' @importFrom igraph graph_from_data_frame
@@ -48,15 +52,22 @@
 #' @importFrom stats rnorm
 #' @importFrom stats runif
 #' @importFrom utils combn
+#' @importFrom utils flush.console
+#' @importFrom utils data
 NULL
 
 # package namespace variables
 	origin<-c(0,0,0)
-	authRadius<-6371.0071810 # authalic radius (R2) based on Moritz, 1980
-	meanRadius<-6371.0087714 # mean radius (R1) based on Mortiz, 1980
-	volRadius <-6371.0007900 # radius of sphere of same volume
+#	authRadius<-6371.0071810 # authalic radius (R2) based on Moritz, 1980
+# updated! to confomr with ESRI:37008
+	authRadius<-6370.997 
+#	meanRadius<-6371.0087714 # mean radius (R1) based on Mortiz, 1980
+#	volRadius <-6371.0007900 # radius of sphere of same volume
 
 .onUnload <- function (libpath) {
 	library.dynam.unload("icosa", libpath)
 }
 
+	# placeholders for lazy loading
+	hexguide <- NULL
+	triguide <- NULL

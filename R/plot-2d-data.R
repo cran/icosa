@@ -6,10 +6,11 @@
 #' some misalignments can happen. If you want to use a differently sized window, use \code{\link[grDevices]{x11}} to set the height and width before running the function.
 #' @param frame (\code{logical}) If \code{TRUE} the grid boundaries will be drawn with black.
 #' @param col (\code{character}) Colors passed to a \code{\link[grDevices]{colorRamp}} in case of the \code{\link{facelayer}} contains \code{logical} values, a single value is required (defaults to \code{"red"}).
-#' @param border (\code{character}) Specifyies the color of the borders of the cells.
+#' @param border (\code{character}) Specifies the color of the borders of the cells.
 #' @param alpha (\code{character}) Two digits for the fill colors, in hexadecimal value between \code{0} and \code{255}.
 #' @param breaks (\code{numeric}) The number of breakpoints between the plotted levels. The argument is passed to the \code{\link[base]{cut}} function. 
 #' @param legend (\code{logical}): Should the legend be plotted? 
+#' @param crs (\code{character} or \code{\link[sf:st_crs]{crs}}) A coordinate system for the transformation of coordinates.
 #' @param inclusive (\code{logical}): If there are values beyond the limits of breaks, should these be represented in the plot (\code{TRUE}) or left out completely \code{FALSE}?
 #' @param discrete (\code{logical}): Do the heatmaps symbolize a discrete or a continuous variable? This argument only affects the legend of the heatmap. 
 #' @rdname plot
@@ -17,7 +18,7 @@
 setMethod(
 	"plot",
 	signature="facelayer",
-	definition=function(x,projargs=NULL,col="heat",border=NA, alpha=NULL, frame=FALSE,legend=TRUE, breaks=NULL, inclusive=TRUE, discrete=FALSE,  ...){
+	definition=function(x,crs=NULL,col="heat",border=NA, alpha=NULL, frame=FALSE,legend=TRUE, breaks=NULL, inclusive=TRUE, discrete=FALSE,  ...){
 		actGrid<-get(x@grid)
 		checkLinkedGrid(actGrid, x)
 		
@@ -39,14 +40,8 @@ setMethod(
 		}
 		
 		#transformation is necessary
-		if(!is.null(projargs)){
-		#	requireNamespace("rgdal")
-		# need rgdal
-			if(requireNamespace("rgdal", quietly = TRUE)){
-				actGrid@sp<-sp::spTransform(actGrid@sp, projargs)
-			} else{
-				stop("The rgdal package is required to appropriately project this object. ")
-			}
+		if(!is.null(crs)){
+			actGrid@sp <- methods::as(sf::st_transform(sf::st_as_sf(actGrid@sp), crs), "Spatial")
 		}
 		#check whether the  grid is actually updated
 		if(sum(x@names%in%rownames(actGrid@faces))!=length(x)) 
@@ -92,7 +87,7 @@ setMethod(
 		actSp<-actSp[boolPresent]
 		
 		#when the values are logical
-		if(class(x@values)=="logical"){
+		if(inherits(x@values,"logical")){
 			#set default color value
 			if(length(col)==1) if(col=="heat") col <- "#FF0000"
 			plot(actSp,col=col,border=border,...)
@@ -254,7 +249,7 @@ setMethod(
 		}
 		
 		# when the values are text | they are not colors
-		if(class(x@values)=="character" & !sum(x@values%in%grDevices::colors())==x@length){
+		if(inherits(x@values,"character") & !sum(x@values%in%grDevices::colors())==x@length){
 			# state the labels in 3d on the face (using the centers of the faces)
 			colorAll <- grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = TRUE)]
 			active<-factor(x@values)
@@ -276,11 +271,11 @@ setMethod(
 			faceColors<-paste(faceColors, alpha, sep="")
 		
 		}
-		if(class(x@values)=="character" & sum(x@values%in%grDevices::colors())==x@length){
+		if(inherits(x@values,"character") & sum(x@values%in%grDevices::colors())==x@length){
 			faceColors<-paste(x@values, alpha, sep="")
 		}
 		
-		if(class(x@values)=="character"){
+		if(inherits(x@values,"character")){
 		
 			# plot the sp object with the given argumetns
 				# get rid of some of the arguments
@@ -316,7 +311,66 @@ setMethod(
 			
 		}
 	
-	
 	}
 
+)
+
+
+#' Plotting loosly referenced data with grid objects using sf's plotting methods
+#' 
+#' The function matches data referred to the grid and plots it with sf's plotting methods.
+#' 
+#' @param y A named vector or table with names that refer to face names of the grid.
+#' @param main The main title of the plot
+#' @rdname plot
+#' @name plot
+#' @aliases plot,trigrid,vector-method
+#' @aliases plot,trigrid,table-method
+#' @examples
+#' # A simple grid, with sf-representation
+#' gr <- hexagrid(4, sf=TRUE)
+#' dat <- 1:nrow(gr@faces)
+#' names(dat) <- paste0("F", dat)
+#' plot(x=gr, y=dat)
+#' @exportMethod plot
+setMethod(
+	"plot",
+	signature=c("trigrid", "vector"),
+	definition=function(x, y, crs=NULL, main="",  ...){
+
+		if(!inherits(x@sf, "sf")) stop("The grid has no @sf representation.\nUse newsf() to create a 2d representation")
+		if(is.null(names(y))) stop("'y' must have the grid's faces as names.")
+
+		# the sf part 
+		thesf <- x@sf
+    	thesf$dat <- y[rownames(thesf)]
+		if(any(!names(y)%in%rownames(thesf))) stop("'y' must have the grid's faces as names.")
+
+		if(!is.null(crs)){
+			thesf <- sf::st_transform(thesf,crs)
+		}
+
+		# plot the data
+		plot(thesf[, "dat"], main=main, ...)
+
+	
+	}
+)
+
+#' @name plot
+#' @rdname plot
+setMethod(
+	"plot",
+	signature=c("trigrid", "table"),
+	definition=function(x, y, crs=NULL, main="",  ...){
+
+		# transform the table to a vector
+		namedVect <- as.numeric(y)
+		names(namedVect) <- names(y)
+
+		# execute the vector-based method
+		plot(x=x, y=namedVect, crs=crs, main=main, ...)
+
+	
+	}
 )

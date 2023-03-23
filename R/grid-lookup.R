@@ -10,6 +10,7 @@
 #' @param gridObj (\code{\link{trigrid}} or \code{\link{hexagrid}}) An icoshedral grid.
 #' 
 #' @param data (\code{matrix}, \code{data.frame} or \code{Spatial}) The queried data.
+#' @param out (\code{character}) What shall be the output class? Can be either \code{\link{facelayer}} or \code{logical} (default.)
 #'
 #' @param ... Arguments passed to the class specific methods
 #'
@@ -17,30 +18,33 @@
 #'
 #' @examples
 #'	# create a grid
-#'	g <- trigrid(8, sp=TRUE)
+#'	g <- trigrid(8, sf=TRUE)
 #'
 #'	# create random points
 #'	randPoints <- rpsphere(100,output="polar")
 #'
-#'	# the facelayer occupied by these points
-#'	randomLayer <- occupied(g, randPoints)
-#'	plot(randomLayer)
-#'	points(randPoints, col="blue", pch="+")
+#'	# the faces occupied by these points
+#'	occ <- occupied(g, randPoints)
+#'  
+#'  # plot using sf slot independently
+#'	plot(g@sf[occ,"geometry"])
+#'	points(randPoints, col="red", pch="+")
 #'	
 #'
 #' @export	
-occupied  <- function(gridObj, data,...){
+occupied  <- function(gridObj, data, out="logical",...){
+
+	if(!out%in%c("logical", "facelayer")) stop("Invalid 'out' argument.")
 	
 	# do spatial transformation if a CRS is present
-	if(methods::.hasSlot(data, "proj4string")){
+	if(inherits(data, "Spatial")){
+		# transform to sf
+		sfData <- sf::st_as_sf(data)
 		# and only if it is not NA
-		if(!is.na(data@proj4string)){
-			# need rgdal
-			if(requireNamespace("rgdal", quietly = TRUE)){
-				data<-sp::spTransform(data, gridObj@proj4string)
-			} else{
-				stop("The rgdal package is required to appropriately project this object. ")
-			}
+		if(!is.na(sf::st_crs(sfData))){
+			#  change crs
+			data<-sf::st_transform(sfData, gridObj@crs)
+			# no need to transform back to sp, this will be done by OccupiedFaces
 		}
 	}
 	
@@ -57,8 +61,17 @@ occupied  <- function(gridObj, data,...){
 	endObj@values<-rep(FALSE, length(endObj))
 	endObj@values[translNum]<-TRUE
 
-	# get the name of the grid - 
-	endObj@grid<-deparse(substitute(gridObj))
+	# output type can vary
+	if(out=="logical"){
+		logic <- values(endObj)
+		names(logic) <- names(endObj)
+		endObj <- logic
+	}
+
+	if(out=="facelayer"){
+		# get the name of the grid - 
+		endObj@grid<-deparse(substitute(gridObj))
+	}
 	return(endObj)
 
 }
@@ -194,7 +207,7 @@ setMethod(
 	"OccupiedFaces",
 	signature=c("trigrid", "SpatialPolygons"),
 	definition=function(gridObj, data){
-		if(!requireNamespace("raster", quietly = TRUE)) stop("Install the 'raster' package to run this function.")
+		if(!requireNamespace("terra", quietly = TRUE)) stop("Install the 'terra' package to run this function.")
 				
 		borders<-NA
 		
@@ -204,16 +217,16 @@ setMethod(
 		#look these up
 		lineFaces<-OccupiedFaces(gridObj, coordLine)
 		
-		# create a raster from the SpatialPolygons
-		r <-raster::raster()
+		# create a SpatRaster from the SpatialPolygons
+		r <-terra::rast()
 		
 		# set the resolution to that of the grid
-		raster::res(r)<-min(edgelength(gridObj, output="deg"))/4
+		terra::res(r)<-min(edgelength(gridObj, output="deg"))/4
 		
-		#rasterize it
-		data<-raster::rasterize(data,r)
+		#rasterize it - cast it as SpatVector
+		data<-terra::rasterize(terra::vect(data),r)
 				
-		# use the OccupiedFaces method of the raster
+		# use the OccupiedFaces method of the SpatRaster
 		inFaces<-OccupiedFaces(gridObj, data)
 		fl <- inFaces | lineFaces
 		return(fl)
@@ -233,30 +246,44 @@ setMethod(
 )
 
 
+#for sf: fall to SpatialPolygonsDataFrame
+setMethod(
+	"OccupiedFaces",
+	signature=c("trigrid", "sf"),
+	definition=function(gridObj, data){
+		temp<-methods::as(data,"Spatial")
+
+		
+		# this works for spatialpolygons and spatialpolygonsdataframes
+		fl <- OccupiedFaces(gridObj, temp)
+		return(fl)
+	}
+)
+
 # for spatial points
 setMethod(
 	"OccupiedFaces",
-	signature=c("trigrid", "RasterLayer"),
+	signature=c("trigrid", "SpatRaster"),
 	definition=function(gridObj, data){
-		if(!requireNamespace("raster", quietly = TRUE)) stop("Install the 'raster' package to run this function.")
+		if(!requireNamespace("terra", quietly = TRUE)) stop("Install the 'terra' package to run this function.")
 		
 		borders<-NA
 		resGrid<-mean(edgelength(gridObj,"deg"))
 		# if the default resolution of the raster is too coarse for the trigrid
-		if(resGrid<(4*raster::res(data)[1]) | resGrid<(4*raster::res(data)[2])){
+		if(resGrid<(4*terra::res(data)[1]) | resGrid<(4*terra::res(data)[2])){
 			#upscale
 			r<-data
-			raster::res(r)<-resGrid/4
-			data<-raster::resample(data, r, "ngb")
+			terra::res(r)<-resGrid/4
+			data<-terra::resample(data, r, method="near")
 		}
 		
-		xmin<-data@extent@xmin
-		xmax<-data@extent@xmax
-		ymin<-data@extent@ymin
-		ymax<-data@extent@ymax
+		xmin<-terra::ext(data)[1]
+		xmax<-terra::ext(data)[2]
+		ymin<-terra::ext(data)[3]
+		ymax<-terra::ext(data)[4]
 		
-		xres<-raster::res(data)[1]
-		yres<-raster::res(data)[2]
+		xres<-terra::res(data)[1]
+		yres<-terra::res(data)[2]
 		
 		xs<-seq(xmin+xres/2, xmax-xres/2,xres)
 		ys<-seq(ymax-yres/2, ymin+yres/2,-yres)
@@ -267,7 +294,7 @@ setMethod(
 		
 		cells<-locate(gridObj, mat)
 		
-		occup<-tapply(X=raster::values(data), INDEX=cells, function(x){sum(!is.na(x))})
+		occup<-tapply(X=terra::values(data), INDEX=cells, function(x){sum(!is.na(x))})
 		occupiedCells<-names(occup)[occup>0]
 		
 		fl<-rep(FALSE, length(gridObj))
@@ -480,30 +507,36 @@ setMethod(
 	}
 )
 
+# locate method of trigrid - sf 
+#' @rdname locate
+setMethod(
+	"locate",
+	signature=c(x="trigrid", y="sf"),
+	function(x,y,...){
+
+		# and it's not NA
+		if(!is.na(sf::st_crs(y))){
+			y <-sf::st_transform(y, x@crs)
+		}
+
+		#  separate matrix method
+		y <- sf::st_coordinates(y)
+
+		# use matrix-method
+		locate(x, y, ...)
+	}
+)
 # locate method of trigrid - SpatialPoints
 #' @rdname locate
 setMethod(
 	"locate",
 	signature=c(x="trigrid", y="SpatialPoints"),
 	function(x,y,...){
-		# if it has a proj4
-		if(methods::.hasSlot(y, "proj4string")){
-			# and it's not NA
-			if(!is.na(y@proj4string)){
-				# need rgdal
-				if(requireNamespace("rgdal", quietly = TRUE)){
-					y<-sp::spTransform(y, x@proj4string)@coords
-				} else{
-					stop("The 'rgdal' package is required to appropriately project this object. ")
-				}
-			}else{
-				y <- y@coords 
-			}
-		}else{
-			y <- y@coords 
-		}
+		# force to sf
+		sfData <- sf::st_as_sf(y)
 
-		locate(x, y, ...)
+		# use  sf-method 
+		locate(x, sfData, ...)
 	}
 )
 
@@ -513,23 +546,11 @@ setMethod(
 	"locate",
 	signature=c(x="trigrid", y="SpatialPointsDataFrame"),
 	function(x,y,...){
-		# if it has a proj4
-		if(methods::.hasSlot(y, "proj4string")){
-			# and it's not NA
-			if(!is.na(y@proj4string)){
-				# need rgdal
-				if(requireNamespace("rgdal", quietly = TRUE)){
-					y<-sp::spTransform(y, x@proj4string)@coords
-				} else{
-					stop("The 'rgdal' package is required to appropriately project this object. ")
-				}
-			}else{
-				y <- y@coords 
-			}
-		}else{
-			y <- y@coords 
-		}
 
+		# force this to SpatialPoints
+		y<- methods::as(y, "SpatialPoints")
+
+		# use SpatialPoints method 
 		locate(x, y, ...)
 	}
 )
@@ -726,7 +747,7 @@ setMethod(
 #' @export
 pos<-function(gridObj, names, output="polar"){
 	
-	if(!class(gridObj)%in%c("trigrid", "hexagrid")) stop("Invalid gridObj argument.")
+	if(!inherits(gridObj, "trigrid")) stop("Invalid gridObj argument.")
 	if(!output%in%c("polar", "cartesian")) stop("Invalid output argument.")
 	
 	names<-as.character(names)
@@ -801,7 +822,7 @@ approximateFace<-function(coords, n, d, gridObj, onlyOne=FALSE, output="skeleton
 	# matrix of random coordinates around this point
 	randMat<-cbind(coords[1]+stats::rnorm(n,0,d), coords[2]+stats::rnorm(n,0,d), coords[3]+stats::rnorm(n,0,d))
 	
-	if(class(gridObj)=="hexagrid"){
+	if(inherits(gridObj,"hexagrid")){
 		temp<-suppressWarnings(locate(gridObj, randMat, output=output, randomborder=FALSE, forceNA=TRUE))
 	}else{
 		temp<-suppressWarnings(locate(gridObj, randMat, output=output, randomborder=FALSE))

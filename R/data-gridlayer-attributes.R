@@ -3,8 +3,8 @@
 #' @usage values(x,...)
 "values" 
 
-if(requireNamespace("raster", quietly = TRUE)){
-	setGeneric("values", def=raster::values)
+if(requireNamespace("terra", quietly = TRUE)){
+	setGeneric("values", def=terra::values)
 }else{
 	setGeneric(
 		name="values",
@@ -34,8 +34,8 @@ setMethod(
 #' @rdname values
 "values<-"
 
-if(requireNamespace("raster", quietly = TRUE)){
-	setGeneric("values<-", def=raster::`values<-`)
+if(requireNamespace("terra", quietly = TRUE)){
+	setGeneric("values<-", def=terra::`values<-`)
 }else{
 	setGeneric(
 		name="values<-",
@@ -48,6 +48,7 @@ if(requireNamespace("raster", quietly = TRUE)){
 
 #' @param value (\code{logical}, \code{character} or \code{numeric}) Replacement values.
 #' @rdname values
+#' @aliases values<-,gridlayer-method
 #' @exportMethod values<-
 setReplaceMethod(	
 	f="values",
