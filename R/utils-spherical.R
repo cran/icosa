@@ -173,33 +173,37 @@ arcdistmat<-function(points1, points2=NULL, origin=c(0,0,0), output="distance", 
 	if(!output%in%c("distance", "deg", "rad")) stop("Invalid \'output\' argument.")
 	if(output=="distance") method<-T
 	if(output%in%c("deg", "rad")) method<-F
-	
+
+	# if the second argument is present
 	present<-T
 	if(is.null(points2)){
 		points2<-points1
 		present<-F
 	}
-	
+
+	# if the input values are not numeric
 	if(!is.numeric(points1) | !is.numeric(points2) | !is.numeric(origin)) stop("Invalid coordinate input.")
 	
-	
+
+	# poorly formatted value
 	if(!ncol(points1)%in%c(2,3) | 
 		!ncol(points2)%in%c(2,3) | 
 		!sum(is.finite(origin))%in%c(2,3)) stop("Invalid coordinate input.")
-	
+
+	# there should not be any NAs
 	if(sum(is.na(points1))>0 | sum(is.na(points2))>0) stop("The coordinates include NAs")
+
+
+	# Ensure that coordinates are passed as Cartesian
 	if(ncol(points1)==2){
 		points1<-PolToCar(matrix(points1, ncol=2),radius=radius, origin=origin)
-		points1<-points1[1,]
 	}
 	
-	
-	
+	# Ensure that coordinates are passed as Cartesian
 	if(ncol(points2)==2){
 		points2<-PolToCar(matrix(points2, ncol=2),radius=radius, origin=origin)
-		points2<-points2[1,]
 	}
-		
+
 	if(present){
 		distMat<- .Call(Cpp_icosa_ArcDistMat_, points1, points2, origin, method)
 	}else{
@@ -662,3 +666,133 @@ chullsphere<-function(data, center=c(0,0,0), radius=authRadius, param=200, stric
 #		}
 #		return(surfarea)
 #	}
+
+#' Function to plot a set of great circle arcs between points
+#'
+#' Low level plotting of great circle arcs with lines
+#' 
+#' @param x A matrix of longitude and latitude points (WGS 84 longlat)
+#' @param breaks the number of points inserted between every points to draw great circle arcs. 
+#' @param breakAtDateline Logical to indicate whether the lines are to be broken at the dateline.
+#' @param plot Logical value whether the plotting should be done at all (in case returned values are needed).
+#' @param ... Arguments passed to lines (par)
+#' @return Invisible return of a matrix of coordinates. If \code{breakAtDateline = TRUE}, then \code{NA} missing values
+#' will be inserted between coordinates where the lines cross the dateline.
+#' @examples
+#' # generate random points
+#' set.seed(0)
+#' example <- rpsphere(10, output="polar")
+#' 
+#' # plotting
+#' plot(NULL, NULL, xlim=c(-180, 180), ylim=c(-90,90))
+#' points(example)
+#' text(label=1:nrow(example), example, pos=2)
+#' arcs(example, col="red", breaks=200)
+#' @rdname arcs
+#' @export
+setGeneric(
+	"arcs",
+	function(x,...) standardGeneric("arcs")
+)
+
+#' @rdname arcs
+setMethod(
+	"arcs",
+	signature=c(x="matrix"),
+	function(x, breaks=100, breakAtDateline=TRUE, plot=TRUE, ...){
+		# if there is just one point
+		if(nrow(x)==1){
+			graphics::points(x, ...)
+			invisible(x)
+		}else{
+
+			# reserve space for all
+			noGaps <- matrix(NA, ncol=2, nrow=nrow(x) + breaks*(nrow(x)-1))
+
+			# for all the points
+			for(i in 2:nrow(x)){
+
+				# separate the points
+				first <- x[i-1,, drop=FALSE]
+
+				# save the very first point
+				if(i==2) noGaps[1, ] <- first
+				second <- x[i,, drop=FALSE]
+
+				# calculate the arcs between them
+				oneset <- arcpoints(first, second, breaks=breaks, output="polar", onlyNew=TRUE)
+
+				# where to save the main part
+				mainPosition <- 2:(breaks+1) + (i-2)*(breaks+1)
+				lastPosition <- breaks+2 + (i-2)*(breaks+1)
+
+				# insert this
+				noGaps[mainPosition,] <- oneset
+				noGaps[lastPosition,] <- second
+
+			}
+
+			# insert missing values into datelines
+			if(breakAtDateline){
+				# based on absolute differences in longitude
+				absDiff <- abs(diff(noGaps[,1]))
+
+				# positions of the breaks
+				breakPos <- which(absDiff>300)
+
+				# do this only if there are any breakpoints
+				if(length(breakPos) > 0){
+					# The restructured matrix
+					longlat <- matrix(NA, ncol=2, nrow=nrow(noGaps)+length(breakPos))
+
+					# do the until the very last
+					for (i in 1:length(breakPos)){
+						if(i == 1){
+							firstSource <- 1
+							firstTarget<- 1
+						}else{
+							firstSource <- breakPos[i-1]+1
+							firstTarget <- breakPos[i-1]+i
+						}
+
+						# where to copy from
+						sourceIndex <- firstSource:breakPos[i]
+
+						# where to copy
+						targetIndex <-firstTarget:(breakPos[i] + i-1)
+
+						# the actual copy
+						longlat[targetIndex,] <- noGaps[sourceIndex,]
+
+					}
+
+					# then copy over the last bit
+					firstSource <- breakPos[i]+1
+					firstTarget <- breakPos[i]+i+1 # pretend next loop!
+					sourceIndex <- firstSource:nrow(noGaps)
+					targetIndex <- firstTarget:nrow(longlat)
+					longlat[targetIndex,] <- noGaps[sourceIndex,]
+
+
+
+				# nothing needs to be done
+				}else{
+					longlat <- noGaps
+
+				}
+
+
+
+			}else{
+				longlat <- noGaps
+			}
+
+
+			# once this is done, it is safe to visualize
+			if(plot) graphics::lines(longlat, ...)
+
+			# return this if needed
+			invisible(longlat)
+		}
+	}
+)

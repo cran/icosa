@@ -15,6 +15,8 @@
 #' # Create a triangular grid
 #' tri <- trigrid(c(2,2))
 #' @name icosa
+"_PACKAGE"
+
 #' @useDynLib icosa, .registration = TRUE, .fixes="Cpp"
 
 #' @importFrom sf st_crs
@@ -38,6 +40,7 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom grDevices colors
 #' @importFrom grDevices heat.colors
+#' @importFrom graphics points
 #' @importFrom graphics grid
 #' @importFrom graphics par
 #' @importFrom graphics rect

@@ -2,6 +2,7 @@
 % Please edit documentation in R/zzz.R
 \docType{package}
 \name{icosa}
+\alias{icosa-package}
 \alias{icosa}
 \title{Global Triangular and Hexa-Pentagonal Grids Based on Tessellated Icosahedra}
 \description{
@@ -18,6 +19,14 @@ This is still the Beta version. Notes about found bugs and suggestions are more 
 \examples{
 # Create a triangular grid
 tri <- trigrid(c(2,2))
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://icosa-grid.github.io/R-icosa/}
+  \item Report bugs at \url{https://github.com/icosa-grid/R-icosa/issues}
+}
+
 }
 \author{
 Adam T. Kocsis (adam.t.kocsis@gmail.com)

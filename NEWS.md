@@ -1,8 +1,27 @@
 # Change log of the R package 'icosa'
 
+# icosa 0.11.1 - 2024-08-16
+
+### Added 
+
+- The `arcs()` function to visualize great circle paths between multiple points.
+- missing support of `sfc`-class objects for the `occupied` function (`OccupiedFaces` method)
+- CITATION entry 
+
+### Fixed 
+
+- Grids can now be created without attaching the package
+- Plotting methods of loosely related data items 
+- Issues with the defense of the `arcdistmat()` function 
+
+### Changed
+
+- The underutilized `faces()` function now returns only the row names of grids and facelayer objects.
+
 # icosa 0.11.0 - 2023-03-21
 
 ### Added
+
 - `resample`,facelayer,SpatRaster-method
 - resolution based grid creation, e.g. `hexagrid(deg=5)`
 - Resolution guides for both the 'hexagrid' and 'trigrid' classes (`hexguide` and `triguide`, respectively), 120 grids each
@@ -16,6 +35,7 @@
 - the `gridensity()` spatial density estimator
 
 ### Changed
+
 - Dependency moved to R 3.5.0 due to serialized R objects (guides)
 - Changed basic reference from 1980 authalic sphere to ESRI:37008 
 - The proj4string (PROJ4) slot of `trigrid` was replaced by crs (sf)
@@ -26,6 +46,7 @@
 - the 'tessguide' object is renamed to '`hexguide`'
 
 ### Removed
+
 - Dependency on raster and rgdal
 - OSM z1 land polygons
 
