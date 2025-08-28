@@ -1,6 +1,51 @@
 # Change log of the R package 'icosa'
 
+# icosa 0.12.0 - 2025-08-28
+
+### Added
+
+- The `grapply` function to iterate various functions using grid rotations.
+- The `spacing` function to measure the distance between face centers.
+- The `meanSpacing_deg` and `sdSpacing_deg` variables to the `hexguide` and `triguide` objects.
+- The `trigrid` and `hexagrid` functions gained a `spacing` argument, allowing the selection of grids based on the spacing in `triguide` and `hexguide`
+- The `vertexradius` function to measure the distance between face centers and face vertices.
+- The `patches` and `holes` functions to analyze shape patterns (methods for the `trigrid` (`hexagrid`) and `facelayer` classes.
+- General support for spatial autocorrelation of data bound to the icosahedral grids using the `spdep` extension package. The `face2nb` function can be used to generate neighborhood list of the icosahedral grids. 
+- `data.frame`-method for the `arcs` function.
+- `matrix`- and `data.frame`-method for the `rotate` function, for 3d sequential and longitude-latitude rotations. The `trigrid` method gained the `projnote` flag.
+- Weighted meaning for spherical centroid calculations: the `surfacearea` function has gained the `w` argument
+-  The `resample` methods that result in `trigrid` class gained the `output` argument, and default to `numeric`. Methods for `resample` with signature `x="SpatRaster", y="Facelayer"` are now added.
+-  The `saveOBJ` function with methods that write the 3D face and vertex informaiton `trigrid` and `hexagrid` class objects as Wavefront .obj files (note the different behavior from `rgl::writeOBJ`!)
+
+
+### Changed
+- The internals of grid rotation (function `rotate`) are moved to Rcpp for performance
+- The `hexagrid`-method of the `surfacearea` function returns a named numeric instead of a named array (as it does for the `trigrid` class).
+- Increased the default resolution of sf-representations for coarse level grids (from 10 to 20 splits).
+- Completely reorganized unit testing suite.
+
+### Fixed
+
+- The `occupied` function crashed when it was used to assess the coverage of spatial feature collections that had mixed type (i.e. polygons and lines). 
+- The `arcs` function returned broken arcs when missing value rows are included in the input matrix
+- Documentation of the `surfacecentroid`, `surfacearea` and `trishape` functions.
+- Facelayer objects could not find the associated grid object in every frame.
+- The `PolToCar` did not always copy over the rownames attribute of the input coordinate tables
+
+### Deprecated
+
+- The `gridensity` function is deprecated and is succeeeded by the more general `grapply`
+
+### Known issues
+
+- Warnings are produced with some `trigrid` objects when the grid's sf representation is created.
+- The grid faces (vertices that make up the faces) do not have a consistent orientation (i. e. clockwise counterclockwise). During .obj export this is corrected.  
+
+* * *
+
 # icosa 0.11.1 - 2024-08-16
+
+[![](https://img.shields.io/badge/doi-10.5281/zenodo.13333485-blue.svg)](https://doi.org/10.5281/zenodo.13333485)
 
 ### Added 
 
@@ -18,7 +63,11 @@
 
 - The underutilized `faces()` function now returns only the row names of grids and facelayer objects.
 
+* * *
+
 # icosa 0.11.0 - 2023-03-21
+
+[![](https://img.shields.io/badge/doi-10.5281/zenodo.7802878-blue.svg)](https://doi.org/10.5281/zenodo.7802878)
 
 ### Added
 
@@ -53,6 +102,10 @@
 * * *
 
 # icosa 0.10.1 - 2021-01-12
+
+
+[![](https://img.shields.io/badge/doi-10.5281/zenodo.7802807-blue.svg)](https://doi.org/10.5281/zenodo.7802807)
+
 ### Changed
 - fixed warnings when the spherical datum of the grids were loaded
 - added checks for the suggested rgl package

@@ -3,9 +3,9 @@
 
 #' Faces occupied by the specified object
 #'
-#' This function will return a \code{\link{facelayer}} class object showing which faces are occupied by the input object.
+#' This function will return an object showing which faces are occupied by the input object.
 #'
-#' This is a wrapper function on the \code{OccupiedFaces} methods that are specific to grid class and input data. 
+#' This is a wrapper function on the \code{OccupiedFaces} methods that are specific to grid class and input data.
 #'
 #' @param gridObj (\code{\link{trigrid}} or \code{\link{hexagrid}}) An icoshedral grid.
 #' 
@@ -14,7 +14,7 @@
 #'
 #' @param ... Arguments passed to the class specific methods
 #'
-#' @return The function Returns a \code{\link{facelayer}}-class object. 
+#' @return The function returns a either a named \code{logical} vector or \code{\link{facelayer}}-class object.
 #'
 #' @examples
 #'	# create a grid
@@ -250,11 +250,32 @@ setMethod(
 	"OccupiedFaces",
 	signature=c("trigrid", "sfc"),
 	definition=function(gridObj, data){
-		temp<-methods::as(data,"Spatial")
 
-		
-		# this works for spatialpolygons and spatialpolygonsdataframes
-		fl <- OccupiedFaces(gridObj, temp)
+		# the geometry types
+		geoms<- sf::st_geometry_type(data)
+
+		# the different geometry types
+		geoTypes <- unique(geoms)
+
+		# transform all of these sequentially and perform occupied
+		for(i in 1:length(geoTypes)){
+			# a single type of data
+			singleType <- data[geoms==geoTypes[i]]
+
+			# transform this to spatial
+			spatial <-methods::as(singleType,"Spatial")
+
+			# and look it up
+			partial <- OccupiedFaces(gridObj, spatial)
+
+			if(i ==1){
+				fl <- partial
+			}else{
+				fl <- fl | partial
+			}
+		}
+
+		# return
 		return(fl)
 	}
 )
@@ -264,11 +285,10 @@ setMethod(
 	"OccupiedFaces",
 	signature=c("trigrid", "sf"),
 	definition=function(gridObj, data){
-		temp<-methods::as(data,"Spatial")
 
-		
-		# this works for spatialpolygons and spatialpolygonsdataframes
-		fl <- OccupiedFaces(gridObj, temp)
+		# only needs the geometry
+		fl <- OccupiedFaces(gridObj, data$geometry)
+
 		return(fl)
 	}
 )

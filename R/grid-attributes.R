@@ -346,7 +346,7 @@ setMethod(
 #' This function will return the areas of all cells in the specified grid object.
 #' 
 #' @name surfacearea
-#' @param gridObj (\code{\link{trigrid}} or \code{\link{hexagrid}}) Object. 
+#' @param x (\code{\link{trigrid}} or \code{\link{hexagrid}}) Object.
 #' 
 #' 
 #' @examples
@@ -354,14 +354,14 @@ setMethod(
 #' surfaces <- surfacearea(g)
 #' surfaces
 #' 
-#' @return A named \code{numeric} vector, in the metric that was given to the function in the coordinates or the radius. \code{"deg"} will output the the distance in degrees, \code{"rad"} will do so in radians.
+#' @return A named \code{numeric} vector, in the metric that was given to the function in the coordinates or the radius of the grid. Default grid configurations yield values in square kilometers.
 #' 	
 #' @rdname surfacearea
 #' @exportMethod surfacearea
 setGeneric(
 	name="surfacearea",
 	package="icosa",
-	def=function(gridObj){
+	def=function(x){
 		standardGeneric("surfacearea")
 		
 	}
@@ -371,26 +371,26 @@ setGeneric(
 setMethod(
 	"surfacearea", 
 	signature="trigrid", 
-	def=function(gridObj){
+	def=function(x){
 		# get the highest resolution faces
-		newF <- gridObj@skeleton$f[as.logical(gridObj@skeleton$aF),1:3]
-		v <- gridObj@skeleton$v
+		newF <- x@skeleton$f[as.logical(x@skeleton$aF),1:3]
+		v <- x@skeleton$v
 		
 		# call the surface calculation function
 		surfInner <-  .Call(Cpp_icosa_spherTriSurfs,
 			v=v, 
 			f=newF, 
-			origin=gridObj@center, 
+			origin=x@center,
 			pi=pi
 		)
 		
 		# reorganize the faces: outer representation
-		ord<-gridObj@skeleton$aF[as.logical(gridObj@skeleton$aF)]
+		ord<-x@skeleton$aF[as.logical(x@skeleton$aF)]
 		
 		surfOuter<-surfInner
 		surfOuter[ord]<- surfInner
 		
-		names(surfOuter) <- rownames(gridObj@faces)
+		names(surfOuter) <- rownames(x@faces)
 		
 		return(surfOuter)
 	}
@@ -400,21 +400,21 @@ setMethod(
 setMethod(
 	"surfacearea", 
 	signature="hexagrid", 
-	def=function(gridObj){
+	def=function(x){
 		# get the highest resolution faces
-		newF <- gridObj@skeleton$f[as.logical(gridObj@skeleton$aSF),1:3]
-		v <- gridObj@skeleton$v
+		newF <- x@skeleton$f[as.logical(x@skeleton$aSF),1:3]
+		v <- x@skeleton$v
 		
 		# call the surface calculation function
 		surfInner <-  .Call(Cpp_icosa_spherTriSurfs, 
 			v=v, 
 			f=newF, 
-			origin=gridObj@center, 
+			origin=x@center,
 			pi=pi
 		)
 		
 		# the subfaces belong to these face IDs in the outer representation
-		aS<-gridObj@skeleton$aSF[as.logical(gridObj@skeleton$aSF)]
+		aS<-x@skeleton$aSF[as.logical(x@skeleton$aSF)]
 		
 		# calculate the sums of all subface areas in a face, and order them
 		doubleSurf<-tapply(INDEX=aS, X=surfInner, sum)
@@ -424,8 +424,12 @@ setMethod(
 		
 		# augment the names attributes
 		names(singleSurf)<- paste("F", names(singleSurf), sep="")
+
+		# enforce numeric
+		res <- as.numeric(singleSurf)
+		names(res) <- names(singleSurf)
 		
-		return(singleSurf)
+		return(res)
 	}
 )
 
@@ -434,7 +438,7 @@ setMethod(
 #' 
 #' This function will return a value that is proportional to the irregularity of a triangonal face or subface. The ratio of the lengths of the shortest and the longest edges.
 #' 
-#' The value is exactly \code{1} for an equilateral triangle, and becomes \code{0} as one of the edges approach \code{0}.
+#' The value is exactly \code{1} for an equilateral triangle, and becomes \code{0} as one of the edges approach \code{0}. The values for hexagrid objects are face-specific means of subface values.
 #'
 #' @name trishape
 #' @param gridObj (\code{\link{trigrid}}, \code{\link{hexagrid}}) Object. 
@@ -503,3 +507,138 @@ setMethod(
 	
 	}
 )
+
+#' Spacing of cell centers
+#'
+#' This function will return the distance between neighboring face centers.
+#'
+#' The value for every pair is given in either degrees or kilometers depending on \code{degree}.
+#'
+#' @name spacing
+#' @param x (\code{\link{trigrid}}, \code{\link{hexagrid}}) Object.
+#' @param degree (\code{logical}) Should the output be returned in degrees or in kóilometers?
+#' @param ... Arguments of class-specific methods.
+#'
+#' @examples
+#' h <- hexagrid(3)
+#' spacing(h)
+#'
+#'
+#' @return A named \code{numeric} vector, one value for every for every neighboring cell pair.
+#'
+#' @rdname spacing
+#' @exportMethod spacing
+setGeneric(
+	name="spacing",
+	def=function(x,...){
+		standardGeneric("spacing")
+	}
+)
+
+#' @rdname spacing
+setMethod(
+	"spacing",
+	signature="trigrid",
+	definition=function(x, degree=TRUE){
+		if(suppressWarnings(is.na(x@graph)[1])){
+			stop("Slot @graph of 'x' is empty. Use newgraph() to add an igraph respresentation. ")
+		}
+
+		# the edge list
+		edgeList <- as.matrix(x@graph, matrix.type="edgelist")
+
+		# the coordinates of the centers
+		centerCoords <- centers(x, output="cartesian")
+
+		# radius to use
+		radius <- sqrt(sum((x@center-centerCoords[1,])^2))
+
+		# output type
+		if(degree){
+			output <- "deg"
+		}else{
+			output <- "distance"
+		}
+
+		# the spacing between the centers
+		spaces <- apply(edgeList, 1, function(y){
+			arcdist(
+				p1=centerCoords[y[1],],
+				p2=centerCoords[y[2],],
+				origin=x@center, radius=radius, output=output)
+		})
+
+		# name the values
+		names(spaces) <- paste(edgeList[,1], edgeList[,2], sep="--")
+
+		# return
+		return(spaces)
+
+	}
+)
+# spacing test: translated grid
+
+
+#' Calculate the vertex radii of icosahedral grid faces
+#'
+#' Great circle distances between face centers and vertices
+#'
+#' @name vertexradius
+#' @param x (\code{\link{trigrid}} or \code{\link{hexagrid}}) Object.
+#' @param degree (\code{logical}) Should the output be returned in degrees or in kóilometers?
+#'
+#' @export
+#' @examples
+#' # example grid
+#' g <- trigrid(3)
+#'
+#' # all vertexradius
+#' vertrads <- vertexradius(g)
+#'
+#' # face average
+#' averages <- apply(vertrads, 1, mean, na.rm=TRUE)
+#'
+#' @return A \code{numeric} matrix that matches in structure with the \code{@faces} slot of the provided grid \code{x}.
+#' Distances measured on each face are in the same row.
+vertexradius <- function(x, degree=TRUE){
+
+	# output every face center-vertex combination
+	faceTab <- x@faces
+
+	# create a container
+	res <- matrix(NA, ncol=ncol(faceTab), nrow=nrow(faceTab))
+
+	# the face centers
+	cents <- x@faceCenters
+	verts <- x@vertices
+
+	# the grid radius (to make it sure))
+	radius  <- sqrt(sum((x@center-cents[1,])^2))
+
+	# switch output
+	if(degree){
+		output <- "deg"
+	}else{
+		output <- "distance"
+	}
+
+	# go through all faces
+	for(i in 1:nrow(res)){
+
+		# where are these there
+		bNoNA <- !is.na(faceTab[i,])
+		# calculate distances
+		thisFace <- arcdistmat(
+			points1=cents[rownames(faceTab)[i], , drop=FALSE],
+			points2=verts[faceTab[i, bNoNA], ],
+			origin=x@center, output=output, radius=radius)
+
+		# store
+		res[i, bNoNA] <- thisFace
+
+	}
+	rownames(res) <- rownames(faceTab)
+
+	# return
+	return(res)
+}

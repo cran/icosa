@@ -1,5 +1,6 @@
 #' Add an igraph object to a predefined slot in an icosahedral grid
 #'
+
 #' @name newgraph
 #		
 #' @rdname newgraph
@@ -284,5 +285,261 @@ setMethod(
 			
 			}
 		}
+	}
+)
+
+#' Make an spdep-style neighbor list for an icosahedral grid
+#'
+#' @param x A trigrid class object
+#' @param queen Should he queen neighborhood be returned?
+#' @return Neighbor-list object such as thoses defined in spdep.
+#' @examples
+#' # calculate a grid
+#' hex <- hexagrid(deg=5)
+#' neighborList <- face2nb(hex)
+#' neighborList
+#' @export
+face2nb <- function(x, queen=FALSE){
+
+	if(!inherits(x, "trigrid")) stop("The function requires an icosahedral grid object.")
+
+	# default
+	if(!(queen) | inherits(x, "hexagrid")){
+
+		# calculate the neighbors
+		faceList <- icosa::vicinity(gridObj=x, faces=faces(x), output="list", self=FALSE)
+
+		# remove the face identifier
+		faceInts <- lapply(faceList, function(x){
+			sort(as.integer(gsub("F","", x)))
+		})
+	# for the queen trigrid method (slower)
+	}else{
+
+		# calculate the neighbors (3rd order)
+		faceList <- icosa::vicinity(gridObj=x, faces=faces(x), output="list", self=TRUE, order=3)
+
+		# remove the face identifier
+		faceInts <- lapply(faceList, function(y){
+
+			# focal vertices
+			focal <- x@faces[y[1], ]
+
+			# others
+			other <- x@faces[y[-1], ]
+
+			#
+			thisVic <-apply(other, 1, function(b){
+				any(b%in%focal)
+			})
+
+			res <- names(thisVic)[thisVic]
+
+
+			sort(as.integer(gsub("F","", res)))
+		})
+
+	}
+
+	# add attributes
+	class(faceInts) <- "nb"
+	attributes(faceInts)$region.id <- faces(x)
+	if(queen){
+		attributes(faceInts)$type <- "queen"
+	}else{
+		attributes(faceInts)$type <- "rook"
+	}
+
+	# return
+	return(faceInts)
+}
+
+
+#' Holes of shapes on an icosahedral grid
+#'
+#' The function calculates the face names that represent holes in a surface shape
+#'
+#' The function uses the horizontal graph of a \code{\link{trigrid}}-class object, removes the subgraph corresponding to a set of faces (the shape),
+#' and searches for isolated subgraphs. The largest subgraph (highest number of vertices, i.e. faces)  is considered to be outside of the shape.
+#' This function relies on the \code{igraph} package to run.
+#' @param x (\code{\link{trigrid}}, \code{\link{hexagrid}} or \code{\link{facelayer}}) An icosahedral grid or associated facelayer object.
+#' @param y (\code{character}) Horizontal shapes defined as a character vector of face names.
+#' @param outside (\code{logical}) Should the set of faces that are outside the shape be returned as well?
+#' @param ... Arguments passed to class-specific methods.
+#' @return A named numeric vector, names correspond to faces, numbers outline the holes. If \code{outside=FALSE} and there are no holes in the shape, the function will return \code{NULL}.
+#' @examples
+#'
+#' # create a grid
+#' hex <- hexagrid(2, sf=TRUE)
+#' # an example shape
+#' shape <- paste0("F", c(4, 5, 11, 13, 15, 21, 24, 26, 32, 33, 34, 35, 36))
+#'
+#' # visualize basic grid
+#' plot(hex)
+#' gridlabs(hex)
+#'
+#' # visualize the shape
+#' plot(hex, shape, col="#FF000055", add=TRUE)
+#'
+#' # calculate holes
+#' ho <- holes(x=hex, y=shape)
+#'
+#' # plot both holes
+#' plot(hex, names(ho[ho==1]), add=TRUE, col="#00FF0055")
+#' plot(hex, names(ho[ho==2]), add=TRUE, col="#0000FF55")
+#' @exportMethod holes
+#' @rdname holes
+#' @name holes
+setGeneric(
+	name="holes",
+#	package="icosa",
+	def=function(x,...){
+		standardGeneric("holes")
+	}
+)
+
+#' @rdname holes
+setMethod(
+	"holes",
+	signature=c(x="trigrid"),
+		definition=function(x, y, outside=FALSE){
+
+		if(suppressWarnings(is.na(x@graph)[1])){
+			stop("Slot @graph of 'x' is empty. Use newgraph() to add an igraph respresentation. ")
+		}
+
+		# do tests for the validity of y
+		if(!inherits(y, "character" )) stop("The given 'y' argument has to be a character vector.")
+		if(!all(y%in%faces(x))) stop("The given 'y' argument needs to be the face names of 'x'.")
+
+		# get the graph of the grid
+		graph <- x@graph
+
+		# the faces of the grid
+		gridFaces <- faces(x)
+
+		# vertices
+		part <- unique(y)
+
+
+
+		# validate face names
+		if(any(!part %in% gridFaces)) stop("Invalid face names!")
+
+		# not part
+		notPart <- gridFaces[!gridFaces %in% part]
+
+		# subGraph
+		subg <- igraph::subgraph(graph, notPart)
+
+		# the compoentns, i.e. unconnected bits
+		isolates <- igraph::components(subg)
+
+		# default output - no holes
+		holeNew <- NULL
+
+		# is the outside of the shape considered as a hole?
+		# if no:
+		if(!outside){
+			# given that there are some holes
+			if(isolates$no>1){
+				# which is the largest? - defined as being outside the shape
+				out <- which.max(isolates$csize)
+
+				# the list of hole faces
+				holeList <- isolates$membership[isolates$membership!=out]
+
+				# re factorize to omit the outside part
+				holeNew <- as.numeric(factor(holeList))
+				names(holeNew) <- names(holeList)
+
+			}
+		}else{
+			# return all sugraphs
+			holeNew <-isolates$membership
+
+		}
+
+		return(holeNew)
+
+	}
+)
+
+#' Patches of shapes on an icosahedral grid
+#'
+#' The function calculates the face names that represent patches in a surface shape
+#'
+#' The function uses the horizontal graph of a \code{\link{trigrid}}-class object, and searches for isolated subgraphs.
+#' This function relies on the \code{igraph} package to run.
+#' @param x (\code{\link{trigrid}}, \code{\link{hexagrid}} or \code{\link{facelayer}}) An icosahedral grid or associated facelayer object.
+#' @param y (\code{character}) Horizontal shapes defined as a character vector of face names.
+#' @param ... Arguments passed to class-specific methods.
+#' @return A named numeric vector, names correspond to faces, numbers define the patches.
+#' @examples
+#'
+#' # create a grid
+#' hex <- hexagrid(2, sf=TRUE)
+#' # an example shape
+#' shape <- paste0("F", c(3,6,7,9, 10, 16, 22, 26))
+#'
+#' # visualize basic grid
+#' plot(hex)
+#' gridlabs(hex)
+#'
+#' # visualize the shape
+#' plot(hex, shape, col="#FF000055", add=TRUE)
+#'
+#' # calculate holes
+#' pa <- patches(x=hex, y=shape)
+#'
+#' # plot all patches (coloring borders)
+#' plot(hex, names(pa[pa==1]), add=TRUE, border="#00FF00", lwd=4)
+#' plot(hex, names(pa[pa==2]), add=TRUE, border="#0000FF", lwd=4)
+#' plot(hex, names(pa[pa==3]), add=TRUE, border="#00FFFF", lwd=4)
+#' @exportMethod patches
+#' @rdname patches
+#' @name patches
+if(requireNamespace("terra", quietly = TRUE)){
+	setGeneric("patches", def=terra::patches)
+}else{
+	setGeneric(
+		name="patches",
+		def=function(x,...){
+			standardGeneric("patches")
+		}
+	)
+}
+
+
+
+#' @rdname patches
+setMethod(
+	"patches",
+	signature=c(x="trigrid"),
+		definition=function(x, y, ...){
+
+		if(suppressWarnings(is.na(x@graph)[1])){
+			stop("Slot @graph of 'x' is empty. Use newgraph() to add an igraph respresentation. ")
+		}
+
+		# do tests for the validity of y
+		if(!inherits(y, "character" )) stop("The given 'y' argument has to be a character vector.")
+		if(!all(y%in%faces(x))) stop("The given 'y' argument needs to be the face names of 'x'.")
+
+		# get the graph of the grid
+		graph <- x@graph
+
+		# vertices
+		part <- unique(y)
+
+		# subGraph
+		subg <- igraph::subgraph(graph, part)
+
+		# the compoentns, i.e. unconnected bits
+		isolates <- igraph::components(subg)
+
+		# return
+		return(isolates$membership)
+
 	}
 )

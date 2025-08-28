@@ -6,6 +6,7 @@
 \alias{resample,SpatRaster,trigrid-method}
 \alias{resample,facelayer,trigrid-method}
 \alias{resample,facelayer,SpatRaster-method}
+\alias{resample,SpatRaster,facelayer-method}
 \title{Resampling of data involving a \code{\link{trigrid}} or a \code{\link{hexagrid}} object.}
 \format{
 An object of class \code{standardGeneric} of length 1.
@@ -13,11 +14,13 @@ An object of class \code{standardGeneric} of length 1.
 \usage{
 resample
 
-\S4method{resample}{SpatRaster,trigrid}(x, y, method = "near", na.rm = TRUE)
+\S4method{resample}{SpatRaster,trigrid}(x, y, method = "near", na.rm = TRUE, output = "numeric")
 
 \S4method{resample}{facelayer,trigrid}(x, y, method = NULL, res = 5)
 
 \S4method{resample}{facelayer,SpatRaster}(x, y, method = NULL, res = 5)
+
+\S4method{resample}{SpatRaster,facelayer}(x, y, ...)
 }
 \arguments{
 \item{x}{(\code{\link[terra:rast]{SpatRaster}}, \code{\link{facelayer}}) Object to resample.}
@@ -28,7 +31,11 @@ resample
 
 \item{na.rm}{(\code{logical}) If a face contains a missing value, should its value be \code{NA} as well (\code{FALSE}) or calculate the mean anyway (\code{TRUE}).}
 
+\item{output}{(\code{character}) The output class of the resampling. Either \code{array} or \code{vector}.}
+
 \item{res}{(\code{numeric}) Value indicating the precision of area estimation during the upscaling (\code{facelayer}-method). In case the \code{"ebaa"} method is chosen, the variable indicate the number of breaking points on an edge.}
+
+\item{...}{Arguments passed to class-specific methods.}
 }
 \value{
 A named \code{numeric} vector.
@@ -45,13 +52,12 @@ This method is necessary to utilize rasterized data in the \code{\link{icosa}} p
 # create a grid
 g <- trigrid(c(4,4))
 # create a data layer
-fl <- facelayer(g)
-fl@values<-rnorm(length(fl))
+fl <- facelayer(g, rnorm(length(faces(g))))
 # target structure
 h <- trigrid(4)
 # resampling
 res <- resample(fl, h)
-fl2<-facelayer(h)
+fl2<-facelayer(h, res)
 fl2@values[] <- res
 
 }

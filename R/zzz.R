@@ -7,7 +7,7 @@
 #'    are provided to position points (latitude-longitude data) on the grids,
 #'    to allow 2D and 3D plotting, use raster and vector spatial data.
 #' 
-#' This is still the Beta version. Notes about found bugs and suggestions are more than welcome!
+#' Note that similar to R, the package comes with absolutely no warranty. Notes about found bugs and suggestions are more than welcome!
 #'
 #' @author Adam T. Kocsis (adam.t.kocsis@gmail.com)
 #' @docType package
@@ -27,6 +27,8 @@
 #' @importFrom sp coordinates
 #' @importFrom igraph graph_from_data_frame
 #' @importFrom igraph induced_subgraph
+#' @importFrom igraph subgraph
+#' @importFrom igraph components
 #' @importFrom sp sp.lines
 #' @importFrom sp Line
 #' @importFrom sp Lines
@@ -52,6 +54,7 @@
 #' @importFrom methods callGeneric
 #' @importFrom methods new
 #' @importFrom stats dist
+#' @importFrom stats weighted.mean
 #' @importFrom stats rnorm
 #' @importFrom stats runif
 #' @importFrom utils combn
